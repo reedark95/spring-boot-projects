@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.api.student.ResponseObject;
 
@@ -20,51 +19,37 @@ import com.api.student.ResponseObject;
 @RequestMapping("/students")
 public class RestApiController {
 
-	private StudentRepository repository;
+	private StudentService service;
 
-	public RestApiController(StudentRepository repository) {
-		this.repository = repository;
-	}
-
-	private Student getStudent(Long studentId) {
-		return repository.findById(studentId).orElseThrow(
-				() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found for ID - " + studentId));
+	public RestApiController(StudentService service) {
+		this.service = service;
 	}
 
 	@GetMapping("")
 	public List<Student> getListOfStudents() {
-		return repository.findAll();
+		return service.getAllStudents();
 	}
 
 	@PostMapping("")
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public Student addStudent(@RequestBody Student student) {
-		return repository.save(student);
+		return service.addNewStudent(student);
 	}
 
 	@GetMapping("/{studentId}")
 	public Student getStudentById(@PathVariable Long studentId) {
-		return repository.findById(studentId).orElseThrow(
-				() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found for ID - " + studentId));
+		return service.getStudent(studentId);
 	}
 
 	@PutMapping("/{studentId}")
 	public ResponseObject updateStudentDetails(@PathVariable Long studentId, @RequestBody Student newStudent) {
-		Student oldStudent = getStudent(studentId);
-
-		Student updatedStudent = oldStudent.toBuilder().firstName(newStudent.getFirstName())
-				.lastName(newStudent.getLastName()).age(newStudent.getAge()).build();
-
-		repository.save(updatedStudent);
-
+		service.updateStudent(studentId, newStudent);
 		return new ResponseObject("Student details successfully updated");
 	}
 
 	@DeleteMapping("/{studentId}")
 	public ResponseObject deleteStudent(@PathVariable Long studentId) {
-		Student student = getStudent(studentId);
-		repository.deleteById(student.getId());
-
+		service.deleteStudent(studentId);
 		return new ResponseObject("Student details successfully deleted");
 	}
 
