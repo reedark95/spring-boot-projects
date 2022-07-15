@@ -13,51 +13,53 @@ public class StudentServiceImpl implements StudentService {
 
 	private StudentRepository repository;
 
-	public StudentServiceImpl(StudentRepository repository) {
+	private DataMapper mapper;
+
+	public StudentServiceImpl(StudentRepository repository, DataMapper mapper) {
 		this.repository = repository;
+		this.mapper = mapper;
 	}
 
 	@Override
-	public List<Student> getAllStudents() {
-		List<Student> list = repository.findAll();
+	public List<StudentDto> getAllStudents() {
+		List<StudentEntity> list = repository.findAll();
 
 		if (list.size() == 0)
 			throw new NoStudentRecordsException();
 
-		return list;
+		return mapper.map(list);
 	}
 
 	@Override
-	public Student addNewStudent(Student newStudent) {
-		if (repository.findByFirstNameAndLastNameAndAge(newStudent.getFirstName(), newStudent.getLastName(),
-				newStudent.getAge()).isPresent())
+	public StudentDto addNewStudent(BaseStudentDto newDetails) {
+		if (repository.findByFirstNameAndLastNameAndAge(newDetails.getFirstName(), newDetails.getLastName(),
+				newDetails.getAge()).isPresent())
 			throw new StudentAlreadyExistException();
 
-		return repository.save(newStudent);
+		return mapper.map(repository.save(mapper.map(newDetails)));
 	}
 
 	@Override
-	public Student getStudent(long studentId) {
-		return getStudentFromDB(studentId);
+	public StudentDto getStudent(long studentId) {
+		return mapper.map(getStudentFromDB(studentId));
 	}
 
 	@Override
-	public void updateStudent(long studentId, Student updatedDetails) {
-		Student oldDetails = getStudentFromDB(studentId);
+	public void updateStudent(long studentId, BaseStudentDto updateDetails) {
+		getStudentFromDB(studentId); // check if exists
 
-		Student newDetails = oldDetails.toBuilder().firstName(updatedDetails.getFirstName())
-				.lastName(updatedDetails.getLastName()).age(updatedDetails.getAge()).build();
-
+		StudentEntity newDetails = new StudentEntity(studentId, updateDetails);
 		repository.save(newDetails);
 	}
 
 	@Override
 	public void deleteStudent(long studentId) {
-		getStudentFromDB(studentId);
+		getStudentFromDB(studentId);// check if exists
+
 		repository.deleteById(studentId);
 	}
 
-	private Student getStudentFromDB(long studentId) {
+	private StudentEntity getStudentFromDB(long studentId) {
 		return repository.findById(studentId).orElseThrow(() -> new StudentNotFoundException(studentId));
 	}
 

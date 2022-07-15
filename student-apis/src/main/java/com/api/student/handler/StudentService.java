@@ -4,13 +4,13 @@ import java.util.List;
 
 public interface StudentService {
 
-	List<Student> getAllStudents();
+	List<StudentDto> getAllStudents();
 
-	Student addNewStudent(Student newStudentDetails);
+	StudentDto addNewStudent(BaseStudentDto newDetails);
 
-	Student getStudent(long studentId);
+	StudentDto getStudent(long studentId);
 
-	void updateStudent(long studentId, Student updatedStudentDetails);
+	void updateStudent(long studentId, BaseStudentDto updateDetails);
 
 	void deleteStudent(long studentId);
 

@@ -26,24 +26,25 @@ public class RestApiController {
 	}
 
 	@GetMapping("")
-	public List<Student> getListOfStudents() {
+	public List<StudentDto> getListOfStudents() {
 		return service.getAllStudents();
 	}
 
 	@PostMapping("")
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public Student addStudent(@RequestBody Student student) {
-		return service.addNewStudent(student);
+	public StudentDto addStudent(@RequestBody BaseStudentDto newStudent) {
+		return service.addNewStudent(newStudent);
 	}
 
 	@GetMapping("/{studentId}")
-	public Student getStudentById(@PathVariable Long studentId) {
+	public StudentDto getStudentById(@PathVariable Long studentId) {
 		return service.getStudent(studentId);
 	}
 
 	@PutMapping("/{studentId}")
-	public ResponseObject updateStudentDetails(@PathVariable Long studentId, @RequestBody Student newStudent) {
-		service.updateStudent(studentId, newStudent);
+	public ResponseObject updateStudentDetails(@PathVariable Long studentId,
+			@RequestBody BaseStudentDto updateStudent) {
+		service.updateStudent(studentId, updateStudent);
 		return new ResponseObject("Student details successfully updated");
 	}
 

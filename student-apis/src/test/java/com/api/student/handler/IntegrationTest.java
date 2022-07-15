@@ -53,7 +53,7 @@ public class IntegrationTest {
 
 	@Test
 	public void createnewStudent() throws JsonProcessingException, Exception {
-		Student a = Student.builder().firstName("Sand").lastName("Man").age(25).build();
+		BaseStudentDto a = BaseStudentDto.builder().firstName("Sand").lastName("Man").age(25).build();
 
 		mockMvc.perform(post("/students").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsBytes(a)))
 				.andExpect(status().isCreated()).andExpect(jsonPath("$.id", is(Long.valueOf(6).intValue())));
@@ -63,15 +63,14 @@ public class IntegrationTest {
 
 	@Test
 	public void testUpdatingStudent() throws JsonProcessingException, Exception {
-		Student a = Student.builder().id(2).firstName("Akash").lastName("Patiala").age(18).build();
+		BaseStudentDto a = BaseStudentDto.builder().firstName("Akash").lastName("Patiala").age(18).build();
 
 		mockMvc.perform(put("/students/2").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsBytes(a)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.message", is("Student details successfully updated")));
 
 		mockMvc.perform(get("/students/2")).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.id", is(Long.valueOf(a.getId()).intValue())))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.id", is(2)))
 				.andExpect(jsonPath("$.firstName", is(a.getFirstName())))
 				.andExpect(jsonPath("$.lastName", is(a.getLastName()))).andExpect(jsonPath("$.age", is(a.getAge())));
 	}
