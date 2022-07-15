@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class RestControllerExceptionHandler {
 
 	@ExceptionHandler(BaseStudentException.class)
-	public ResponseEntity<RestApiResponseObject> handle(BaseStudentException e) {
-		return new ResponseEntity<RestApiResponseObject>(new RestApiResponseObject(e), e.getStatus());
+	public ResponseEntity<RestApiExceptionResponse> handle(BaseStudentException e) {
+		return new ResponseEntity<RestApiExceptionResponse>(new RestApiExceptionResponse(e), e.getStatus());
 	}
 
 }

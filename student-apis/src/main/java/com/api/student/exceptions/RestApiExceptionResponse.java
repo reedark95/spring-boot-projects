@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
-class RestApiResponseObject {
+class RestApiExceptionResponse {
 
 	private LocalDateTime timestamp;
 
@@ -13,7 +13,7 @@ class RestApiResponseObject {
 
 	private String message;
 
-	public RestApiResponseObject(BaseStudentException e) {
+	public RestApiExceptionResponse(BaseStudentException e) {
 		timestamp = LocalDateTime.now();
 		statusCode = e.getStatus().value();
 		message = e.getMessage();
